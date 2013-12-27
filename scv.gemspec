@@ -19,6 +19,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "fakefs"
+  spec.add_development_dependency "fuubar"
 
   spec.files        = Dir.glob("{bin|lib}/**/*") + %w(LICENSE README.md)
   spec.executables  = ['scv']
