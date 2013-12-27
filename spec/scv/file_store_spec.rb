@@ -46,6 +46,10 @@ describe SCV::FileStore do
     expect(subject.fetch('lib/vcs_toolkit/utils/memory_store.rb')).to eq 'class MemoryStore'
   end
 
+  it 'raises KeyError on non-existent files' do
+    expect { subject.fetch('lib/file_that_never_was') }.to raise_error(KeyError)
+  end
+
   it 'can store a file' do
     subject.store 'bin/svc', 'simple version control'
     expect(subject.fetch('bin/svc')).to eq 'simple version control'

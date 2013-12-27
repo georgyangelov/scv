@@ -21,6 +21,8 @@ module SCV
     end
 
     def fetch(path)
+      raise KeyError unless file? path
+
       File.open(path_for(path), 'rb') do |file|
         file.read
       end
