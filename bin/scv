@@ -23,12 +23,13 @@ command :init do |config|
     path = global_options[:dir]
 
     if File.directory? File.join(path, '.scv')
-      exit_now! "There is already an SCV repository #{path == '.' ? 'here' : 'at ' + path}"
+      raise "There is already an SCV repository #{path == '.' ? 'here' : 'at ' + path}"
     end
 
     SCV::Repository.create_at path
 
     puts "Job's finished!"
+    puts "You can now use `scv commit` to create your first commit!"
   end
 end
 

@@ -1,6 +1,8 @@
 require 'vcs_toolkit/exceptions'
 require 'scv/objects'
 
+require 'json'
+
 module SCV
 
   ##
