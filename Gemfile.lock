@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/stormbreakerbg/vcs-toolkit.git
+  revision: d7decde86487bea474aa98d6365a34e305afd97e
+  specs:
+    vcs_toolkit (0.0.1)
+      diff-lcs
+
 PATH
   remote: .
   specs:
@@ -21,12 +28,11 @@ GEM
     rspec-expectations (2.14.4)
       diff-lcs (>= 1.1.3, < 2.0)
     rspec-mocks (2.14.4)
-    ruby-progressbar (1.3.2)
-    vcs_toolkit (0.0.1)
-      diff-lcs
+    ruby-progressbar (1.4.0)
 
 PLATFORMS
   ruby
+  x86-mingw32
 
 DEPENDENCIES
   fakefs
@@ -34,3 +40,4 @@ DEPENDENCIES
   rake
   rspec
   scv!
+  vcs_toolkit!
