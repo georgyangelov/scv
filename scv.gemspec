@@ -15,13 +15,14 @@ Gem::Specification.new do |spec|
   spec.license     = "MIT"
 
   spec.add_runtime_dependency "vcs_toolkit"
+  spec.add_runtime_dependency "gli"
 
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "fakefs"
   spec.add_development_dependency "fuubar"
 
-  spec.files        = Dir.glob("{bin|lib}/**/*") + %w(LICENSE README.md)
+  spec.files        = Dir.glob("{bin,lib}/**/*") + %w(LICENSE README.md)
   spec.executables  = ['scv']
   spec.require_path = 'lib'
 end

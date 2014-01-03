@@ -1,3 +1,56 @@
 #!/usr/bin/env ruby
 
-puts 'SCV ready!'
+require 'scv'
+require 'gli'
+
+include GLI::App
+
+program_desc 'A simple VCS implemented in Ruby on top of the VCSToolkit library'
+
+version SCV::VERSION
+
+desc   'Print more stuff'
+switch [:v, :verbose]
+
+desc          'The path to the working directory'
+default_value '.'
+arg_name      'directory path'
+flag          [:dir]
+
+desc 'Initialize an empty repository.'
+command :init do |config|
+  config.action do |global_options, options, args|
+    path = global_options[:dir]
+
+    if File.directory? File.join(path, '.scv')
+      exit_now! "There is already an SCV repository #{path == '.' ? 'here' : 'at ' + path}"
+    end
+
+    SCV::Repository.create_at path
+
+    puts "Job's finished!"
+  end
+end
+
+pre do |global,command,options,args|
+  # Pre logic here
+  # Return true to proceed; false to abort and not call the
+  # chosen command
+  # Use skips_pre before a command to skip this block
+  # on that command only
+  true
+end
+
+post do |global,command,options,args|
+  # Post logic here
+  # Use skips_post before a command to skip this
+  # block on that command only
+end
+
+on_error do |exception|
+  # Error logic here
+  # return false to skip default error handling
+  true
+end
+
+exit run(ARGV)

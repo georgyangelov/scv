@@ -5,3 +5,5 @@ require 'scv/objects'
 
 require 'scv/file_store'
 require 'scv/object_store'
+
+require 'scv/repository'
