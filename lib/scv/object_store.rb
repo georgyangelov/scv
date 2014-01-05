@@ -33,8 +33,8 @@ module SCV
   # The file extension determines the object format. Possible formats
   # are `json` and `json.gz` (`json.gz` will be supported in the future).
   #
-  # For each blob object in `.scv/objects/` there may be a file in
-  # `.scv/blobs/`. These blobs follow the same naming scheme as the
+  # For each blob object in `.scv/blobs/` there may be a file in
+  # `.scv/objects/`. These blobs follow the same naming scheme as the
   # objects, but they are just binary files (not in `json` format).
   #
   # The refs are named objects (object.named? == true) and can be
@@ -52,11 +52,10 @@ module SCV
         object_path = get_object_path object_id
       end
 
-      @store.store(object_path, JSON.generate(object.to_hash))
-
       if object.is_a? VCSToolkit::Objects::Blob
-        blob_path = get_blob_path object_id
-        @store.store(blob_path, object.content)
+        @store.store(get_blob_path(object_id), object.content)
+      else
+        @store.store(object_path, JSON.generate(object.to_hash))
       end
     end
 
@@ -67,18 +66,16 @@ module SCV
         object_path = get_object_path object_id, named: true
       end
 
-      hash = JSON.parse(@store.fetch object_path)
-
-      if hash['object_type'] == 'blob'
-        content = @store.fetch get_blob_path(object_id)
-        Objects::Blob.from_hash hash, content: content
-      else
-        object_type = hash['object_type'].capitalize
-
-        raise 'Unknown object type' unless Objects.const_defined? object_type
-
-        Objects.const_get(object_type).from_hash hash
+      unless @store.file? object_path
+        return fetch_blob object_id
       end
+
+      hash = JSON.parse(@store.fetch object_path)
+      object_type = hash['object_type'].capitalize
+
+      raise 'Unknown object type' unless Objects.const_defined? object_type
+
+      Objects.const_get(object_type).from_hash hash
     end
 
     def key?(object_id)
@@ -98,6 +95,12 @@ module SCV
     end
 
     private
+
+    def fetch_blob(object_id)
+      content = @store.fetch get_blob_path(object_id)
+
+      SCV::Objects::Blob.new object_id: object_id, content: content
+    end
 
     def get_object_path(object_id, named: false)
       if named
