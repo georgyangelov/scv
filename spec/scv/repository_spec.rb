@@ -28,9 +28,4 @@ describe SCV::Repository do
     end
   end
 
-  it 'finds and creates labels' do
-    repository.send :create_label, 'test_label', '123456'
-    expect(repository[:test_label]).to be_a SCV::Objects::Label
-  end
-
 end
