@@ -19,7 +19,7 @@ describe SCV::ObjectStore do
   end
 
   it 'can store and retrieve a blob' do
-    blob = VCSToolkit::Objects::Blob.new content: 'file content'
+    blob = SCV::Objects::Blob.new content: 'file content'
 
     subject.store blob.object_id, blob
 
@@ -27,8 +27,8 @@ describe SCV::ObjectStore do
   end
 
   it 'can store and retrieve a tree' do
-    tree = VCSToolkit::Objects::Tree.new files: {'file1' => 'content1'},
-                                         trees: {'dir1'  => '123456'  }
+    tree = SCV::Objects::Tree.new files: {'file1' => 'content1'},
+                                  trees: {'dir1'  => '123456'  }
 
     subject.store tree.object_id, tree
 
@@ -36,11 +36,11 @@ describe SCV::ObjectStore do
   end
 
   it 'can store and retrieve a commit' do
-    commit = VCSToolkit::Objects::Commit.new message: 'message',
-                                             tree:    '1234567',
-                                             parent:  '7654321',
-                                             author:  'me',
-                                             date:    '2013-12-27 16:06:00'
+    commit = SCV::Objects::Commit.new message: 'message',
+                                      tree:    '1234567',
+                                      parent:  '7654321',
+                                      author:  'me',
+                                      date:    DateTime.now
 
     subject.store commit.object_id, commit
 
@@ -48,8 +48,8 @@ describe SCV::ObjectStore do
   end
 
   it 'can store and retrieve a label' do
-    label = VCSToolkit::Objects::Label.new object_id:    'master',
-                                           reference_id: '123456'
+    label = SCV::Objects::Label.new object_id:    'master',
+                                    reference_id: '123456'
 
     subject.store label.object_id, label
 
@@ -58,8 +58,8 @@ describe SCV::ObjectStore do
 
   describe '#key?' do
     it 'returns true for existing objects' do
-      tree = VCSToolkit::Objects::Tree.new files: {'file1' => 'content1'},
-                                           trees: {'dir1'  => '123456'  }
+      tree = SCV::Objects::Tree.new files: {'file1' => 'content1'},
+                                    trees: {'dir1'  => '123456'  }
 
       subject.store tree.object_id, tree
 
@@ -71,8 +71,8 @@ describe SCV::ObjectStore do
     end
 
     it 'works correctly with named objects' do
-      label = VCSToolkit::Objects::Label.new object_id:    'master',
-                                             reference_id: '123456'
+      label = SCV::Objects::Label.new object_id:    'master',
+                                      reference_id: '123456'
 
       subject.store label.object_id, label
 
@@ -87,10 +87,10 @@ describe SCV::ObjectStore do
     end
 
     it 'enumerates all named object names' do
-      label1 = VCSToolkit::Objects::Label.new object_id:    'HEAD',
-                                              reference_id: '123456'
-      label2 = VCSToolkit::Objects::Label.new object_id:    'master',
-                                              reference_id: '123456'
+      label1 = SCV::Objects::Label.new object_id:    'HEAD',
+                                       reference_id: '123456'
+      label2 = SCV::Objects::Label.new object_id:    'master',
+                                       reference_id: '123456'
 
       subject.store label1.object_id, label1
       subject.store label2.object_id, label2
