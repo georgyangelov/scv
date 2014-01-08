@@ -12,8 +12,8 @@ module SCV
         super
       end
 
-      def generate_id
-        Digest::SHA1.hexdigest [@message, @tree, @parent, @author, @date.to_s].inspect
+      def hash_objects
+        [@message, @tree, @parent, @author, @date.to_s]
       end
 
     end
