@@ -38,12 +38,16 @@ describe SCV::FileStore do
   end
 
   it 'can fetch a file in root' do
-    expect(subject.fetch('README.md')).to eq files['README.md']
+    expect(subject.fetch('README.md').read).to eq files['README.md']
+  end
+
+  it 'can fetch a file directly' do
+    expect(subject.fetch('README.md', as_stream: false)).to eq files['README.md']
   end
 
   it 'can fetch a file in another dir' do
-    expect(subject.fetch('lib/vcs_toolkit.rb')).to eq files['lib/vcs_toolkit.rb']
-    expect(subject.fetch('lib/vcs_toolkit/utils/memory_store.rb')).to eq 'class MemoryStore'
+    expect(subject.fetch('lib/vcs_toolkit.rb').read).to eq files['lib/vcs_toolkit.rb']
+    expect(subject.fetch('lib/vcs_toolkit/utils/memory_store.rb').read).to eq 'class MemoryStore'
   end
 
   it 'raises KeyError on non-existent files' do
@@ -51,8 +55,8 @@ describe SCV::FileStore do
   end
 
   it 'can store a file' do
-    subject.store 'bin/svc', 'simple version control'
-    expect(subject.fetch('bin/svc')).to eq 'simple version control'
+    subject.store 'bin/svc', StringIO.new('simple version control')
+    expect(subject.fetch('bin/svc').read).to eq 'simple version control'
   end
 
   describe '#file?' do

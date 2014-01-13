@@ -16,15 +16,25 @@ module SCV
 
       # TODO: Decide on the file permissions (maybe in time store them as Git does)
       File.open(path, 'wb') do |file|
-        file.write(content)
+        if content.is_a? String
+          file.write content
+        else
+          while buffer = content.read(16 * 1024)
+            file.write buffer
+          end
+        end
       end
     end
 
-    def fetch(path)
+    def fetch(path, as_stream: true)
       raise KeyError unless file? path
 
-      File.open(path_for(path), 'rb') do |file|
-        file.read
+      if as_stream
+        File.open(path_for(path), 'rb')
+      else
+        File.open(path_for(path), 'rb') do |file|
+          file.read
+        end
       end
     end
 

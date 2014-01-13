@@ -70,7 +70,7 @@ module SCV
         return fetch_blob object_id
       end
 
-      hash = JSON.parse(@store.fetch object_path)
+      hash = JSON.parse(@store.fetch object_path, as_stream: false)
       object_type = hash['object_type'].capitalize
 
       raise 'Unknown object type' unless Objects.const_defined? object_type
