@@ -1,3 +1,4 @@
 #/bin/sh
 
-env GLI_DEBUG=true bundle exec bin/scv "$@"
+SCRIPT_PATH="`dirname \"$0\"`"
+env GLI_DEBUG=true BUNDLE_GEMFILE="$SCRIPT_PATH/Gemfile" bundle exec "$SCRIPT_PATH/bin/scv" "$@"

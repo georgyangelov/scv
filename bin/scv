@@ -23,16 +23,29 @@ require_relative 'commands/commit'
 require_relative 'commands/status'
 require_relative 'commands/history'
 
-pre do |global,command,options,args|
+pre do |global, command, options, args|
   # Pre logic here
   # Return true to proceed; false to abort and not call the
   # chosen command
   # Use skips_pre before a command to skip this block
   # on that command only
+
+  # Check if the current directory is an SCV repository
+  # or is a subdirectory of one.
+  unless command.name == :init
+    working_dir = Pathname.new(global[:dir]).realpath
+    raise 'The working directory cannot be found' unless working_dir.directory?
+
+    working_dir = working_dir.enum_for(:ascend).find { |dir| dir.join('.scv').directory? }
+    raise "This directory is not (in) an SCV repository" if working_dir.nil?
+
+    global[:dir] = working_dir.to_path
+  end
+
   true
 end
 
-post do |global,command,options,args|
+post do |global, command, options, args|
   # Post logic here
   # Use skips_post before a command to skip this
   # block on that command only
