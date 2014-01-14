@@ -10,7 +10,7 @@ command [:history, :log] do |c|
       puts "Date   #{commit.date.strftime "%A %Y-%m-%d %H:%M:%S %z"}"
 
       puts
-      puts commit.message.lines.map { |line| "    #{line}" }.join("\n")
+      puts commit.message.lines.map { |line| "    #{line}" }.join ''
       puts
     end
   end
