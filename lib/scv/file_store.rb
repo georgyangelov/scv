@@ -36,6 +36,10 @@ module SCV
       File.directory? path_for(path)
     end
 
+    def changed?(path, blob)
+      fetch(path) != blob.content
+    end
+
     def each_file(path='', &block)
       path = '.' if path.empty?
 

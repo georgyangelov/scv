@@ -89,6 +89,23 @@ describe SCV::FileStore do
     end
   end
 
+  describe '#changed?' do
+    it 'detects changed files' do
+      blob = VCSToolkit::Objects::Blob.new content: files['lib/vcs_toolkit/objects/object.rb']
+      File.write('lib/vcs_toolkit/objects/object.rb', 'changed content')
+
+      expect(subject.changed? 'lib/vcs_toolkit/objects/object.rb', blob).to be_true
+    end
+
+    it 'detects non-changed files' do
+      files.each do |name, content|
+        blob = VCSToolkit::Objects::Blob.new content: content
+
+        expect(subject.changed? name, blob).to be_false
+      end
+    end
+  end
+
   it 'can iterate over files' do
     expect(subject.files.to_a).to match_array [
       'README.md',
