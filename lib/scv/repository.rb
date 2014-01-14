@@ -24,7 +24,7 @@ module SCV
     # Creates a commit which is a snapshot of the
     # staging area (currently the working directory).
     #
-    def commit(message, author, date)
+    def commit(message, author, date, ignore:)
       super
     end
 

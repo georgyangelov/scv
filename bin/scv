@@ -50,8 +50,13 @@ command :commit do |c|
   c.flag          :date
 
   c.action do |global_options, options, args|
-    working_dir_path = global_options[:dir]
-    repository_path  = "#{working_dir_path}/.scv"
+    repository = SCV::Repository.new global_options[:dir]
+    repository_path  = "#{global_options[:dir]}/.scv"
+    status = repository.status repository[:head].reference_id, ignore: [/^\.|\/\./]
+
+    if status.none? { |_, files| files.any? }
+      raise 'No changes since last commit'
+    end
 
     unless options[:author]
       raise 'Please provide an author with --author="..." or set it globally with `scv config -g author ...`'
@@ -75,8 +80,10 @@ command :commit do |c|
 
     date = options[:date].is_a?(String) ? DateTime.parse(options[:date]) : options[:date]
 
-    repository = SCV::Repository.new global_options[:dir]
-    repository.commit commit_message, options[:author], date
+    repository.commit commit_message,
+                      options[:author],
+                      date,
+                      ignore: [/^\.|\/\./]
   end
 end
 
