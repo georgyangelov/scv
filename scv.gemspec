@@ -16,6 +16,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "vcs_toolkit"
   spec.add_runtime_dependency "gli"
+  spec.add_runtime_dependency "colorize"
 
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"

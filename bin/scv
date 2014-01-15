@@ -2,6 +2,7 @@
 
 require 'scv'
 require 'gli'
+require 'colorize'
 
 include GLI::App
 
@@ -11,6 +12,10 @@ version SCV::VERSION
 
 desc   'Print more stuff'
 switch [:v, :verbose]
+
+desc          'Colorize output if running in an interactive shell'
+default_value true
+switch        [:colors]
 
 desc          'The path to the working directory'
 default_value '.'
@@ -41,6 +46,19 @@ pre do |global, command, options, args|
     raise "This directory is not (in) an SCV repository" if working_dir.nil?
 
     global[:dir] = working_dir.to_path
+  end
+
+  # Switch colors on or off
+  unless global[:colors] and $stdout.isatty
+    # Disable colorize
+    String.class_eval do
+      alias_method :original_colorize, :colorize
+
+      def colorize(*args)
+        # Ignore color requests
+        self
+      end
+    end
   end
 
   true
