@@ -4,7 +4,7 @@ require 'json'
 
 describe SCV::ObjectStore do
 
-  subject { described_class.new '.scv' }
+  subject(:object_store) { described_class.new '.scv' }
 
   before(:each) do
     FakeFS.activate!
@@ -21,18 +21,18 @@ describe SCV::ObjectStore do
   it 'can store and retrieve a blob' do
     blob = SCV::Objects::Blob.new content: 'file content'
 
-    subject.store blob.id, blob
+    object_store.store blob.id, blob
 
-    expect(subject.fetch(blob.id)).to eq blob
+    expect(object_store.fetch(blob.id)).to eq blob
   end
 
   it 'can store and retrieve a tree' do
     tree = SCV::Objects::Tree.new files: {'file1' => 'content1'},
                                   trees: {'dir1'  => '123456'  }
 
-    subject.store tree.id, tree
+    object_store.store tree.id, tree
 
-    expect(subject.fetch(tree.id)).to eq tree
+    expect(object_store.fetch(tree.id)).to eq tree
   end
 
   it 'can store and retrieve a commit' do
@@ -42,18 +42,18 @@ describe SCV::ObjectStore do
                                       author:  'me',
                                       date:    DateTime.now
 
-    subject.store commit.id, commit
+    object_store.store commit.id, commit
 
-    expect(subject.fetch(commit.id)).to eq commit
+    expect(object_store.fetch(commit.id)).to eq commit
   end
 
   it 'can store and retrieve a label' do
     label = SCV::Objects::Label.new id:           'master',
                                     reference_id: '123456'
 
-    subject.store label.id, label
+    object_store.store label.id, label
 
-    expect(subject.fetch(label.id)).to eq label
+    expect(object_store.fetch(label.id)).to eq label
   end
 
   describe '#key?' do
@@ -61,29 +61,37 @@ describe SCV::ObjectStore do
       tree = SCV::Objects::Tree.new files: {'file1' => 'content1'},
                                     trees: {'dir1'  => '123456'  }
 
-      subject.store tree.id, tree
+      object_store.store tree.id, tree
 
-      expect(subject.key? tree.id).to be_true
+      expect(object_store.key? tree.id).to be_true
+    end
+
+    it 'returns true for existing blobs' do
+      blob = SCV::Objects::Blob.new content: 'file content'
+
+      object_store.store blob.id, blob
+
+      expect(object_store.key? blob.id).to be_true
     end
 
     it 'returns false for non-existing objects' do
-      expect(subject.key? '123456').to be_false
+      expect(object_store.key? '123456').to be_false
     end
 
     it 'works correctly with named objects' do
       label = SCV::Objects::Label.new id:           'master',
                                       reference_id: '123456'
 
-      subject.store label.id, label
+      object_store.store label.id, label
 
-      expect(subject.key? 'master').to be_true
-      expect(subject.key? 'HEAD'  ).to be_false
+      expect(object_store.key? 'master').to be_true
+      expect(object_store.key? 'HEAD'  ).to be_false
     end
   end
 
   describe '#each' do
     it 'works with empty set of named objects' do
-      expect(subject.each.to_a).to match_array []
+      expect(object_store.each.to_a).to match_array []
     end
 
     it 'enumerates all named object names' do
@@ -92,10 +100,10 @@ describe SCV::ObjectStore do
       label2 = SCV::Objects::Label.new id:           'master',
                                        reference_id: '123456'
 
-      subject.store label1.id, label1
-      subject.store label2.id, label2
+      object_store.store label1.id, label1
+      object_store.store label2.id, label2
 
-      expect(subject.each.to_a).to match_array %w(HEAD master)
+      expect(object_store.each.to_a).to match_array %w(HEAD master)
     end
   end
 

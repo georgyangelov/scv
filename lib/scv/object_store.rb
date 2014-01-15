@@ -79,13 +79,11 @@ module SCV
     end
 
     def key?(object_id)
-      object_path = get_object_path object_id
-
-      unless @store.file? object_path
-        object_path = get_object_path object_id, named: true
-      end
-
-      @store.file? object_path
+      [
+        get_object_path(object_id),
+        get_object_path(object_id, named: true),
+        get_blob_path(object_id),
+      ].any? { |path| @store.file? path }
     end
 
     def each(&block)
@@ -111,7 +109,7 @@ module SCV
     end
 
     def get_blob_path(object_id)
-      File.join 'blobs', object_id[0...2], object_id
+      File.join 'blobs', object_id.to_s[0...2], object_id.to_s
     end
   end
 end
