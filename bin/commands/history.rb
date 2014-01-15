@@ -5,7 +5,7 @@ command [:history, :log] do |c|
     repository = SCV::Repository.new global_options[:dir]
 
     repository.history.each do |commit|
-      puts "Commit #{commit.object_id}"
+      puts "Commit #{commit.id}"
       puts "Author #{commit.author}"
       puts "Date   #{commit.date.strftime "%A %Y-%m-%d %H:%M:%S %z"}"
 

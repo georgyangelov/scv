@@ -99,7 +99,7 @@ module SCV
     def fetch_blob(object_id)
       content = @store.fetch get_blob_path(object_id)
 
-      SCV::Objects::Blob.new object_id: object_id, content: content
+      SCV::Objects::Blob.new id: object_id, content: content
     end
 
     def get_object_path(object_id, named: false)

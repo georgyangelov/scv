@@ -21,18 +21,18 @@ describe SCV::ObjectStore do
   it 'can store and retrieve a blob' do
     blob = SCV::Objects::Blob.new content: 'file content'
 
-    subject.store blob.object_id, blob
+    subject.store blob.id, blob
 
-    expect(subject.fetch(blob.object_id)).to eq blob
+    expect(subject.fetch(blob.id)).to eq blob
   end
 
   it 'can store and retrieve a tree' do
     tree = SCV::Objects::Tree.new files: {'file1' => 'content1'},
                                   trees: {'dir1'  => '123456'  }
 
-    subject.store tree.object_id, tree
+    subject.store tree.id, tree
 
-    expect(subject.fetch(tree.object_id)).to eq tree
+    expect(subject.fetch(tree.id)).to eq tree
   end
 
   it 'can store and retrieve a commit' do
@@ -42,18 +42,18 @@ describe SCV::ObjectStore do
                                       author:  'me',
                                       date:    DateTime.now
 
-    subject.store commit.object_id, commit
+    subject.store commit.id, commit
 
-    expect(subject.fetch(commit.object_id)).to eq commit
+    expect(subject.fetch(commit.id)).to eq commit
   end
 
   it 'can store and retrieve a label' do
-    label = SCV::Objects::Label.new object_id:    'master',
+    label = SCV::Objects::Label.new id:           'master',
                                     reference_id: '123456'
 
-    subject.store label.object_id, label
+    subject.store label.id, label
 
-    expect(subject.fetch(label.object_id)).to eq label
+    expect(subject.fetch(label.id)).to eq label
   end
 
   describe '#key?' do
@@ -61,9 +61,9 @@ describe SCV::ObjectStore do
       tree = SCV::Objects::Tree.new files: {'file1' => 'content1'},
                                     trees: {'dir1'  => '123456'  }
 
-      subject.store tree.object_id, tree
+      subject.store tree.id, tree
 
-      expect(subject.key? tree.object_id).to be_true
+      expect(subject.key? tree.id).to be_true
     end
 
     it 'returns false for non-existing objects' do
@@ -71,10 +71,10 @@ describe SCV::ObjectStore do
     end
 
     it 'works correctly with named objects' do
-      label = SCV::Objects::Label.new object_id:    'master',
+      label = SCV::Objects::Label.new id:           'master',
                                       reference_id: '123456'
 
-      subject.store label.object_id, label
+      subject.store label.id, label
 
       expect(subject.key? 'master').to be_true
       expect(subject.key? 'HEAD'  ).to be_false
@@ -87,13 +87,13 @@ describe SCV::ObjectStore do
     end
 
     it 'enumerates all named object names' do
-      label1 = SCV::Objects::Label.new object_id:    'HEAD',
+      label1 = SCV::Objects::Label.new id:           'HEAD',
                                        reference_id: '123456'
-      label2 = SCV::Objects::Label.new object_id:    'master',
+      label2 = SCV::Objects::Label.new id:           'master',
                                        reference_id: '123456'
 
-      subject.store label1.object_id, label1
-      subject.store label2.object_id, label2
+      subject.store label1.id, label1
+      subject.store label2.id, label2
 
       expect(subject.each.to_a).to match_array %w(HEAD master)
     end
