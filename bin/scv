@@ -23,8 +23,11 @@ arg_name      'directory path'
 flag          [:dir]
 
 # Require utilities
-require_relative 'utilities/shell.rb'
-require_relative 'utilities/output.rb'
+require_relative 'utilities/shell'
+require_relative 'utilities/output'
+
+# Require formatters
+require_relative 'formatters/changeset'
 
 # Require all available commands
 require_relative 'commands/init'

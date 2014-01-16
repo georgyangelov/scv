@@ -12,11 +12,16 @@ module Output
       end
     end
 
-    def print_block(&block)
-      block.call if pager.nil?
+    def print_block
+      return yield($stdout) if pager.nil?
 
       IO.popen(pager, 'w') do |stream|
-        stream.instance_eval &block
+        begin
+          $stdout = stream
+          yield stream
+        ensure
+          $stdout = STDOUT
+        end
       end
     end
   end
