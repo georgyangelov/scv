@@ -106,6 +106,20 @@ describe SCV::FileStore do
     end
   end
 
+  describe '#delete_file' do
+    it 'calls File.unlink' do
+      expect(File).to receive(:unlink).with('test/file.rb')
+      subject.delete_file('test/file.rb')
+    end
+  end
+
+  describe '#delete_dir' do
+    it 'calls Dir.unlink' do
+      expect(Dir).to receive(:unlink).with('test/dir')
+      subject.delete_dir('test/dir')
+    end
+  end
+
   it 'can iterate over files' do
     expect(subject.files.to_a).to match_array [
       'README.md',

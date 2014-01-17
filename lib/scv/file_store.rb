@@ -28,6 +28,14 @@ module SCV
       end
     end
 
+    def delete_file(path)
+      File.unlink path
+    end
+
+    def delete_dir(path)
+      Dir.unlink path
+    end
+
     def file?(path)
       File.file? path_for(path)
     end
