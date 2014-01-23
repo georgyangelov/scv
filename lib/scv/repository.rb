@@ -21,11 +21,42 @@ module SCV
     end
 
     ##
-    # Creates a commit which is a snapshot of the
-    # staging area (currently the working directory).
+    # Resolve references from `object_id` to the first
+    # object of type `to_type`.
+    # Examples:
+    #   label -> commit
+    #   label -> label  -> commit
+    #   label -> commit -> tree
     #
-    def commit(message, author, date, ignore:)
-      super
+    # If `object_id` contains '~n' suffix, where `n` >= 0 and
+    # the reference path contains a commit, the `parent` pointer
+    # of the commit is followed and the `n`-th commit is picked.
+    #
+    def resolve(object_id, to_type)
+      parent_index = 0
+
+      if object_id =~ /^(.+)~([0-9]+)$/
+        object_id    = $1
+        parent_index = $2.to_i
+      end
+
+      object = self[object_id]
+
+      case object.object_type
+      when to_type
+        object
+      when :label
+        resolve object.reference_id, to_type
+      when :commit
+        if parent_index > 0
+          parent_index.times { object = self[object.parent] }
+          resolve object.id, to_type
+        else
+          resolve object.tree, to_type
+        end
+      else
+        raise "Cannot resolve #{object_id} to a #{to_type}"
+      end
     end
 
     ##
