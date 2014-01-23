@@ -47,7 +47,7 @@ describe SCV::Repository do
   end
 
   before(:each) do
-    repository.stub(:repository) do
+    repository.stub(:object_store) do
       {
         commit.id       => commit,
         tree.id         => tree,
@@ -86,7 +86,8 @@ describe SCV::Repository do
       end
 
       it 'raises an error if the resolution fails' do
-        expect { repository.resolve(:commit, :label) }.to raise_error
+        expect { repository.resolve(:commit, :label)  }.to raise_error
+        expect { repository.resolve(:unknown, :label) }.to raise_error
       end
     end
   end

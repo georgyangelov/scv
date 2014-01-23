@@ -10,8 +10,8 @@ command [:reset, :restore] do |c|
     repository = SCV::Repository.new global_options[:dir]
     commit     = repository.resolve options[:source], :commit
 
-    args.each do |file_path|
-      repository.reset_file file_path, commit.id
+    args.each do |path|
+      repository.restore path, commit.id
     end
   end
 end

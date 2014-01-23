@@ -42,6 +42,8 @@ module SCV
 
       object = self[object_id]
 
+      raise KeyError, "Cannot find object #{object_id}" if object.nil?
+
       case object.object_type
       when to_type
         object
