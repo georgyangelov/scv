@@ -35,7 +35,7 @@ require_relative 'commands/commit'
 require_relative 'commands/status'
 require_relative 'commands/history'
 require_relative 'commands/diff'
-require_relative 'commands/reset'
+require_relative 'commands/restore'
 
 pre do |global, command, options, args|
   # Pre logic here
