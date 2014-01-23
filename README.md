@@ -56,6 +56,12 @@ Example: `scv commit --author "Georgy Angelov <test@test.test>"`
 
 Lists all commits, in reverse-chronological order with their **id**, **date**, **author** and **message**.
 
+---
+`scv restore <paths>...`
+
+Restores files to the state they were in the `head` commit. `paths` can be files or directories. New files will not be removed, only changed and deleted files are restored.
+
+You can optionally specify the source commit with `-s` or `--source` by giving its object_id, a label name that references it or an object_id and a relative offset (for example `head~3`).
 
 Try it!
 =======
