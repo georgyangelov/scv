@@ -1,6 +1,6 @@
 desc 'Resets files to the state they were in the specified commit'
 arg_name '<file> ...'
-command [:reset, :restore] do |c|
+command [:restore] do |c|
   c.desc          'Use this specify which commit should be the used as reference'
   c.arg_name      'source'
   c.default_value 'head'
