@@ -6,7 +6,7 @@ module Output
       if raw or not $stdout.isatty
         @pager = nil
       elsif Shell.command_exist? 'less'
-        @pager = 'less -R -F'
+        @pager = 'less -R -F -X'
       elsif Shell.command_exist? 'more'
         @pager = 'more'
       end
