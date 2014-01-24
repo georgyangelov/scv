@@ -3,7 +3,7 @@ require 'json'
 
 describe SCV::ObjectStore do
 
-  subject(:object_store) { described_class.new '.scv' }
+  subject(:object_store) { described_class.new SCV::FileStore.new('.scv') }
 
   before(:each) do
     FakeFS.activate!

@@ -6,7 +6,7 @@ module SCV
       repository_path = "#{path}/.scv"
 
       working_directory = FileStore.new   path
-      object_store      = ObjectStore.new repository_path
+      object_store      = ObjectStore.new FileStore.new(repository_path)
 
       super object_store,
             working_directory,

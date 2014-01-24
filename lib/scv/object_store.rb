@@ -41,8 +41,8 @@ module SCV
   # enumerated.
   #
   class ObjectStore < VCSToolkit::ObjectStore
-    def initialize(path)
-      @store = FileStore.new path
+    def initialize(file_store)
+      @store = file_store
     end
 
     def store(object_id, object)
