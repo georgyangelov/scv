@@ -7,7 +7,7 @@ command [:restore] do |c|
   c.flag          [:s, :source]
 
   c.action do |global_options, options, args|
-    repository = SCV::Repository.new global_options[:dir]
+    repository = global_options[:repository]
     commit     = repository.resolve options[:source], :commit
 
     args.each do |path|

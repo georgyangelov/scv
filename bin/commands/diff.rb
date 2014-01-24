@@ -2,7 +2,7 @@ desc 'Displays the file changes in the working directory'
 arg_name ''
 command :diff do |c|
   c.action do |global_options, options, args|
-    repository = SCV::Repository.new global_options[:dir]
+    repository = global_options[:repository]
     status     = repository.status repository.head,
                                    ignore: [/^\.|\/\./]
 

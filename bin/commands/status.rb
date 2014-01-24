@@ -2,11 +2,16 @@ desc 'Shows the created, modified and deleted files'
 arg_name ''
 command :status do |c|
   c.action do |global_options, options, args|
-    repository = SCV::Repository.new global_options[:dir]
-    status     = repository.status repository[:head].reference_id,
+    repository = global_options[:repository]
+    status     = repository.status repository.head,
                                    ignore: [/^\.|\/\./]
 
-    puts "# On commit #{repository.head.yellow}"
+    if repository.head.nil?
+      puts "# No commits"
+    else
+      puts "# On commit #{repository.head.yellow}"
+    end
+
     puts
 
     if status.none? { |_, files| files.any? }

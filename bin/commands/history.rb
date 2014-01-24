@@ -2,7 +2,7 @@ desc 'Displays the commit history'
 arg_name ''
 command [:history, :log] do |c|
   c.action do |global_options, options, args|
-    repository = SCV::Repository.new global_options[:dir]
+    repository = global_options[:repository]
 
     output do
       repository.history.each do |commit|

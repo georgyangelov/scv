@@ -56,6 +56,18 @@ pre do |global, command, options, args|
     global[:dir] = working_dir.to_path
   end
 
+  # Initialize the repository object.
+  unless command.name == :init
+    repository = SCV::Repository.new global[:dir]
+    global[:repository] = repository
+  end
+
+  # Check if there is a commit in the repository
+  # as most commands expect one to exist.
+  unless [:init, :status, :commit].include? command.name
+    raise "There are no commits in the repository" if repository.head.nil?
+  end
+
   # Switch colors on or off
   unless global[:colors] and $stdout.isatty
     # Disable colorize

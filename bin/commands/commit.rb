@@ -19,9 +19,9 @@ command :commit do |c|
   c.switch        :amend
 
   c.action do |global_options, options, args|
-    repository = SCV::Repository.new global_options[:dir]
+    repository = global_options[:repository]
     repository_path  = "#{global_options[:dir]}/.scv"
-    status = repository.status repository[:head].reference_id, ignore: [/^\.|\/\./]
+    status = repository.status repository.head, ignore: [/^\.|\/\./]
 
     if status.none? { |_, files| files.any? }
       raise 'No changes since last commit'
@@ -31,7 +31,7 @@ command :commit do |c|
       raise 'Please provide an author with --author="..." or set it globally with `scv config -g author ...`'
     end
 
-    if options[:amend] and repository[:head].reference_id.nil?
+    if options[:amend] and repository.head.nil?
       raise 'Amend requested but there are no commits'
     end
 
@@ -57,7 +57,7 @@ command :commit do |c|
 
     date = options[:date].is_a?(String) ? DateTime.parse(options[:date]) : options[:date]
 
-    repository.head = repository[repository[:head].reference_id].parent if options[:amend]
+    repository.head = repository[repository.head].parent if options[:amend]
 
     repository.commit commit_message,
                       options[:author],
