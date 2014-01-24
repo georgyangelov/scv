@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'fakefs/safe'
 require 'json'
 
 describe SCV::ObjectStore do

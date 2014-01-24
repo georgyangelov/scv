@@ -17,11 +17,13 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "vcs_toolkit"
   spec.add_runtime_dependency "gli"
   spec.add_runtime_dependency "colorize"
+  spec.add_runtime_dependency "httparty"
 
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "fakefs"
   spec.add_development_dependency "fuubar"
+  spec.add_development_dependency "webmock"
 
   spec.files        = Dir.glob("{bin,lib}/**/*") + %w(LICENSE README.md)
   spec.executables  = ['scv']
