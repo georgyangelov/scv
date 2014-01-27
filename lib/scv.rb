@@ -3,9 +3,10 @@ require 'vcs_toolkit'
 require 'scv/version'
 require 'scv/objects'
 
+require 'scv/migration'
+
 require 'scv/file_store'
 require 'scv/http_file_store'
 require 'scv/object_store'
 
 require 'scv/repository'
-require 'scv/migration'

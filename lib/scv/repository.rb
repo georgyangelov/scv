@@ -1,4 +1,5 @@
 require 'vcs_toolkit/repository'
+require 'scv/migrations'
 
 module SCV
   class Repository < VCSToolkit::Repository
@@ -9,6 +10,20 @@ module SCV
 
       working_directory = FileStore.new   path
       object_store      = ObjectStore.new FileStore.new(repository_path)
+
+      unless init
+        repository_version   = working_directory.fetch '.scv/config/version'
+        available_migrations = Migrations.constants.map do |migration_class|
+          Migrations.const_get(migration_class).new
+        end
+
+        Repository.migrate working_directory,
+                           object_store,
+                           migrations:         available_migrations,
+                           repository_version: repository_version
+      end
+
+      working_directory.store '.scv/config/version', SCV::VERSION
 
       super object_store,
             working_directory,
@@ -78,14 +93,30 @@ module SCV
       new working_directory, init: true
     end
 
-    private
+    ##
+    # Attempts to run the neccessary migrations and update the
+    # repository version.
+    #
+    # Yields the applied migration objects.
+    #
+    def self.migrate(working_directory,
+                     object_store,
+                     migrations:,
+                     repository_version:,
+                     last_version: SCV::VERSION)
+      current_version = repository_version.split('.').map(&:to_i)
+      last_version    = last_version      .split('.').map(&:to_i)
 
-    def version=(version=SCV::VERSION)
-      working_directory.store '.scv/config/version', version
-    end
+      return [] if (current_version <=> last_version) >= 0
 
-    def version
-      working_directory.fetch '.scv/config/version'
+      migrations = migrations.sort_by(&:version)
+
+      migrations.each do |migration|
+        if migration.should_apply_to? repository_version
+          migration.apply working_directory, object_store
+          yield migration if block_given?
+        end
+      end
     end
   end
 end
