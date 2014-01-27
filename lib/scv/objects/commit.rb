@@ -13,7 +13,19 @@ module SCV
       end
 
       def hash_objects
-        [@message, @tree, @parent, @author, @date.to_s]
+        [@message, @tree, parents_for_hash, @author, @date.to_s]
+      end
+
+      private
+
+      def parents_for_hash
+        if parents.empty?
+          nil
+        elsif parents.size == 1
+          parents.first
+        else
+          parents
+        end
       end
 
     end

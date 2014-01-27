@@ -37,7 +37,7 @@ describe SCV::ObjectStore do
   it 'can store and retrieve a commit' do
     commit = SCV::Objects::Commit.new message: 'message',
                                       tree:    '1234567',
-                                      parent:  '7654321',
+                                      parents: ['7654321'],
                                       author:  'me',
                                       date:    DateTime.now
 
