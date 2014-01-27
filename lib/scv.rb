@@ -8,3 +8,4 @@ require 'scv/http_file_store'
 require 'scv/object_store'
 
 require 'scv/repository'
+require 'scv/migration'

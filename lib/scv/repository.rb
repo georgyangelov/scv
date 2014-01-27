@@ -2,6 +2,8 @@ require 'vcs_toolkit/repository'
 
 module SCV
   class Repository < VCSToolkit::Repository
+    alias_method :working_dir, :staging_area
+
     def initialize(path, init: false)
       repository_path = "#{path}/.scv"
 
@@ -74,6 +76,16 @@ module SCV
       end
 
       new working_directory, init: true
+    end
+
+    private
+
+    def version=(version=SCV::VERSION)
+      working_directory.store '.scv/config/version', version
+    end
+
+    def version
+      working_directory.fetch '.scv/config/version'
     end
   end
 end
