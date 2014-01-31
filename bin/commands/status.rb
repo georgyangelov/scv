@@ -3,13 +3,15 @@ arg_name ''
 command :status do |c|
   c.action do |global_options, options, args|
     repository = global_options[:repository]
-    status     = repository.status repository.head,
+    commit     = repository.resolve(:head, :commit)
+    status     = repository.status commit.id,
                                    ignore: [/^\.|\/\./]
 
     if repository.head.nil?
       puts "# No commits"
     else
-      puts "# On commit #{repository.head.yellow}"
+      puts "# On branch #{repository.head}"
+      puts "# On commit #{commit.id.yellow}"
     end
 
     puts

@@ -21,10 +21,13 @@ command :commit do |c|
   c.action do |global_options, options, args|
     repository = global_options[:repository]
     repository_path  = "#{global_options[:dir]}/.scv"
-    status = repository.status repository.head, ignore: [/^\.|\/\./]
 
-    if status.none? { |_, files| files.any? }
-      raise 'No changes since last commit'
+    unless options[:amend]
+      status = repository.status repository.resolve(:head, :commit).id, ignore: [/^\.|\/\./]
+
+      if status.none? { |_, files| files.any? }
+        raise 'No changes since last commit'
+      end
     end
 
     unless options[:author]
@@ -41,7 +44,7 @@ command :commit do |c|
       commit_message_file = "#{repository_path}/COMMIT_MESSAGE"
 
       if options[:amend]
-        File.write(commit_message_file, repository[repository[:head].reference_id].message)
+        File.write commit_message_file, repository.resolve(:head, :commit).message
       end
 
       system "$EDITOR #{commit_message_file}"
@@ -57,7 +60,7 @@ command :commit do |c|
 
     date = options[:date].is_a?(String) ? DateTime.parse(options[:date]) : options[:date]
 
-    repository.head = repository[repository.head].parent if options[:amend]
+    repository.branch_head = repository.resolve('head~1', :commit) if options[:amend]
 
     repository.commit commit_message,
                       options[:author],

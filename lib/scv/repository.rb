@@ -15,9 +15,12 @@ module SCV
             blob_class:   Objects::Blob,
             label_class:  Objects::Label
 
-      set_label :head, nil if init
+      if init
+        set_label :master, nil
+        set_label :head,   :master
+      end
 
-      self.head = get_object(:head)
+      self.head = get_object(:head).reference_id
     end
 
     ##
@@ -32,30 +35,32 @@ module SCV
     # the reference path contains a commit, the `parent` pointer
     # of the commit is followed and the `n`-th commit is picked.
     #
-    def resolve(object_id, to_type)
-      parent_index = 0
-
+    def resolve(object_id, to_type, parent_offset: 0)
       if object_id =~ /^(.+)~([0-9]+)$/
         object_id    = $1
-        parent_index = $2.to_i
+        parent_offset = $2.to_i
       end
 
       object = self[object_id]
 
       raise KeyError, "Cannot find object #{object_id}" if object.nil?
 
+      if object.object_type == :commit and parent_offset > 0
+        parent_offset.times do
+          raise "Commit #{object.id} has more than one parent" if object.parents.size > 1
+          raise "Commit #{object_id} has no parents"           if object.parents.size.zero?
+
+          object = self[object.parents.first]
+        end
+      end
+
       case object.object_type
       when to_type
         object
       when :label
-        resolve object.reference_id, to_type
+        resolve object.reference_id, to_type, parent_offset: parent_offset
       when :commit
-        if parent_index > 0
-          parent_index.times { object = self[object.parent] }
-          resolve object.id, to_type
-        else
-          resolve object.tree, to_type
-        end
+        resolve object.tree, to_type
       else
         raise "Cannot resolve #{object_id} to a #{to_type}"
       end
