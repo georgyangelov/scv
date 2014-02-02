@@ -8,7 +8,7 @@ command :branch do |c|
     create.desc          'Specifies the commit/label that will be used as the branch head'
     create.arg_name      'head'
     create.default_value 'head'
-    create.flag          [:b, :head, :base]
+    create.flag          [:b, :head]
 
     create.action do |global_options, options, args|
       branch_name = args.first
