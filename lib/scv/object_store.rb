@@ -60,17 +60,11 @@ module SCV
     end
 
     def fetch(object_id)
-      object_path = get_object_path object_id
+      object_location = find_object object_id
 
-      unless @store.file? object_path
-        object_path = get_object_path object_id, named: true
-      end
+      return fetch_blob(object_id) if object_location[:type] == :blob
 
-      unless @store.file? object_path
-        return fetch_blob object_id
-      end
-
-      hash = JSON.parse(@store.fetch object_path)
+      hash = JSON.parse(@store.fetch(object_location[:path]))
       object_type = hash['object_type'].capitalize
 
       raise 'Unknown object type' unless Objects.const_defined? object_type
@@ -78,12 +72,20 @@ module SCV
       Objects.const_get(object_type).from_hash hash
     end
 
+    ##
+    # A method not required by VCSToolkit used to remove
+    # labels or possibly garbage collection.
+    #
+    def remove(object_id)
+      raise KeyError, 'The object does not exit' unless key? object_id
+
+      location = find_object object_id
+
+      @store.delete_file location[:path]
+    end
+
     def key?(object_id)
-      [
-        get_object_path(object_id),
-        get_object_path(object_id, named: true),
-        get_blob_path(object_id),
-      ].any? { |path| @store.file? path }
+      not find_object(object_id).nil?
     end
 
     def each(&block)
@@ -110,6 +112,14 @@ module SCV
 
     def get_blob_path(object_id)
       File.join 'blobs', object_id.to_s[0...2], object_id.to_s
+    end
+
+    def find_object(object_id)
+      [
+        {path: get_object_path(object_id),              type: :object},
+        {path: get_object_path(object_id, named: true), type: :label },
+        {path: get_blob_path(object_id),                type: :blob  },
+      ].find { |location| @store.file? location[:path] }
     end
   end
 end
