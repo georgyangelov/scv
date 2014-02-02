@@ -9,6 +9,7 @@ include GLI::App
 program_desc 'A simple VCS implemented in Ruby on top of the VCSToolkit library'
 
 version SCV::VERSION
+subcommand_option_handling :normal
 
 desc   'Print more stuff'
 switch [:v, :verbose]
@@ -36,6 +37,7 @@ require_relative 'commands/status'
 require_relative 'commands/history'
 require_relative 'commands/diff'
 require_relative 'commands/restore'
+require_relative 'commands/branch'
 
 pre do |global, command, options, args|
   # Pre logic here
