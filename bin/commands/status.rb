@@ -4,7 +4,7 @@ command :status do |c|
   c.action do |global_options, options, args|
     repository = global_options[:repository]
     commit     = repository.resolve(:head, :commit)
-    status     = repository.status commit.id,
+    status     = repository.status commit,
                                    ignore: [/^\.|\/\./]
 
     if repository.head.nil?

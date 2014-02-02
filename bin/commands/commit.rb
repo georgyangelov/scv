@@ -23,7 +23,7 @@ command :commit do |c|
     repository_path  = "#{global_options[:dir]}/.scv"
 
     unless options[:amend]
-      status = repository.status repository.resolve(:head, :commit).id, ignore: [/^\.|\/\./]
+      status = repository.status repository.resolve(:head, :commit), ignore: [/^\.|\/\./]
 
       if status.none? { |_, files| files.any? }
         raise 'No changes since last commit'

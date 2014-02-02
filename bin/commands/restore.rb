@@ -11,7 +11,7 @@ command [:restore] do |c|
     commit     = repository.resolve options[:source], :commit
 
     args.each do |path|
-      repository.restore path, commit.id
+      repository.restore path, commit
     end
   end
 end
