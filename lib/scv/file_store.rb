@@ -14,7 +14,6 @@ module SCV
 
       FileUtils.mkdir_p File.dirname(path)
 
-      # TODO: Decide on the file permissions (maybe in time store them as Git does)
       File.open(path, 'wb') do |file|
         file.write(content)
       end
@@ -29,11 +28,11 @@ module SCV
     end
 
     def delete_file(path)
-      File.unlink path
+      File.unlink path_for(path)
     end
 
     def delete_dir(path)
-      Dir.unlink path
+      Dir.unlink path_for(path)
     end
 
     def file?(path)

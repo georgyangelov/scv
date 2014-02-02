@@ -67,6 +67,17 @@ module SCV
     end
 
     ##
+    # Delete a label (only).
+    #
+    def delete_label(name)
+      label = get_object name
+
+      raise 'The object is not a label' if label.object_type != :label
+
+      object_store.remove name
+    end
+
+    ##
     # Create an empty repository in the specified directory.
     #
     # Initializes the directory structure and creates a head label.
