@@ -24,7 +24,7 @@ command :branch do |c|
     end
   end
 
-  c.desc 'Delete a branch (label)'
+  c.desc 'Delete a branch'
   c.arg_name '<branch name>'
   c.command [:delete, :remove] do |remove|
     remove.action do |global_options, options, args|
@@ -33,12 +33,53 @@ command :branch do |c|
       raise 'No branch name specified' if branch_name.nil?
 
       repository = global_options[:repository]
-      branch      = repository[branch_name]
+      branch     = repository[branch_name]
 
       raise 'The specified branch does not exits'      if branch.nil?
       raise 'The specified name is not a branch/label' if branch.object_type != :label
 
       repository.delete_label branch_name
+    end
+  end
+
+  c.desc 'Switch head to another branch. Does not change any files'
+  c.arg_name '<branch name>'
+  c.command :switch do |switch|
+    switch.action do |global_options, options, args|
+      branch_name = args.first
+
+      raise 'No branch name specified' if branch_name.nil?
+
+      repository = global_options[:repository]
+      branch     = repository[branch_name]
+
+      raise 'This is the current branch already' if repository.head == branch_name
+      raise 'There is no branch with this name'  if branch.nil? or branch.object_type != :label
+
+      changes = repository.commit_status repository.resolve('head',      :commit),
+                                         repository.resolve(branch_name, :commit)
+
+      status  = repository.status repository.resolve('head', :commit),
+                                  ignore: [/^\.|\/\./]
+
+      # Check for conflicts
+      branch_changes      = changes[:created] | changes[:changed] | changes[:deleted]
+      working_dir_changes = status[:created]  | status[:changed]  | status[:deleted]
+      conflicts           = branch_changes & working_dir_changes
+
+      unless conflicts.empty?
+        raise 'Branch switch aborted due to conflics. Please commit or reset local changes'
+      end
+
+      repository.set_label :head, branch_name
+
+      # Reset unchanged files to their state in the new branch
+      commit = repository.resolve 'head', :commit
+      tree   = repository[commit.tree]
+
+      tree.all_files(repository.object_store, ignore: working_dir_changes).each do |file, _|
+        repository.restore file, commit
+      end
     end
   end
 
