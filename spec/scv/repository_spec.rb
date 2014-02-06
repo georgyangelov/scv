@@ -17,7 +17,7 @@ describe SCV::Repository do
       SCV::Repository.create_at 'repo/'
 
       expect(File.directory? 'repo/.scv').to be_true
-      expect(Dir.entries     'repo/.scv').to match_array %w(. .. objects refs blobs config)
+      expect(Dir.entries     'repo/.scv').to match_array %w(. .. objects refs blobs config.yml)
     end
 
     it 'creates head and master labels' do
@@ -25,6 +25,18 @@ describe SCV::Repository do
 
       expect(repo[:head  ].reference_id).to eq "master"
       expect(repo[:master].reference_id).to be_nil
+    end
+
+    it 'creates a config file with version' do
+
+      expect_any_instance_of(SCV::Config).to receive(:[]=).
+                                             with('version', SCV::VERSION).
+                                             and_call_original
+      expect_any_instance_of(SCV::Config).to receive(:save)
+
+      repo = SCV::Repository.create_at 'repo/'
+
+      expect(repo.config['version']).to eq SCV::VERSION
     end
   end
 

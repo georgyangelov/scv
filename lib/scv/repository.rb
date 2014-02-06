@@ -2,11 +2,14 @@ require 'vcs_toolkit/repository'
 
 module SCV
   class Repository < VCSToolkit::Repository
+    attr_reader :config
+
     def initialize(path, init: false)
       repository_path = "#{path}/.scv"
 
       working_directory = FileStore.new   path
       object_store      = ObjectStore.new FileStore.new(repository_path)
+      @config           = Config.new      FileStore.new(repository_path), 'config.yml'
 
       super object_store,
             working_directory,
@@ -18,6 +21,9 @@ module SCV
       if init
         set_label :master, nil
         set_label :head,   :master
+
+        @config['version'] = SCV::VERSION
+        @config.save
       end
 
       self.head = get_object(:head).reference_id
@@ -83,7 +89,7 @@ module SCV
     # Initializes the directory structure and creates a head label.
     #
     def self.create_at(working_directory)
-      directories = %w(.scv/objects .scv/refs .scv/blobs .scv/config)
+      directories = %w(.scv/objects .scv/refs .scv/blobs)
 
       directories.each do |directory|
         FileUtils.mkdir_p File.join(working_directory, directory)
