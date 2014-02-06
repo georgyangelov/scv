@@ -1,9 +1,22 @@
 desc 'Merges two branches to the working directory'
 arg_name '<branch name>'
 command :merge do |c|
+  c.desc          'Abort the current merge. Resets the working dir and the next commit parents'
+  c.arg_name      'abort'
+  c.switch        :abort
+
   c.action do |global_options, options, args|
     repository = global_options[:repository]
     commit     = repository.resolve(:head, :commit)
+
+    if options[:abort]
+      repository.config['merge'] = {}
+      repository.config.save
+
+      repository.restore '.', commit
+
+      next
+    end
 
     raise 'No branch specified to merge from' if args.empty?
 
