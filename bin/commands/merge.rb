@@ -13,7 +13,17 @@ command :merge do |c|
 
     merge_status = repository.merge commit, commit_two
 
-    puts "# Merged #{args[0]} into #{repository.head}"
+    # Save the merged commit ids so that the next
+    # commit has both as parents.
+    repository.config['merge'] = {
+      'parents' => [
+        commit.id,
+        commit_two.id,
+      ]
+    }
+    repository.config.save
+
+    puts "# Merged #{args.first} into #{repository.head}"
     puts
 
     if merge_status[:merged].any?
@@ -34,6 +44,10 @@ command :merge do |c|
       end
 
       puts
+    else
+      puts "# You can now use `scv commit` to create the merge commit"
+      puts "# The next commit will have two parents"
+      puts "# To abort the merge (not create a merge commit) use `scv merge --abort`"
     end
   end
 end

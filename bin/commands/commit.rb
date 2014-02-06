@@ -62,9 +62,23 @@ command :commit do |c|
 
     repository.branch_head = repository.resolve('head~1', :commit) if options[:amend]
 
+    parents = nil
+
+    if repository.config['merge'] and repository.config['merge']['parents']
+      # There is a merge waiting for a commit creation
+      parents = repository.config['merge']['parents']
+
+      repository.config['merge'] = {}
+    end
+
     repository.commit commit_message,
                       options[:author],
                       date,
-                      ignore: [/^\.|\/\./]
+                      parents: parents,
+                      ignore:  [/^\.|\/\./]
+
+    if parents
+      repository.config.save
+    end
   end
 end
