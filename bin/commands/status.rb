@@ -14,6 +14,17 @@ command :status do |c|
       puts "# On commit #{commit.id.yellow}"
     end
 
+    if repository.config['merge'] and repository.config['merge']['parents']
+      parents = repository.config['merge']['parents']
+
+      puts
+      puts "# Next commit parents:"
+
+      parents.each do |commit_id|
+        puts "#     - #{commit_id.yellow}"
+      end
+    end
+
     puts
 
     if status.none? { |_, files| files.any? }
