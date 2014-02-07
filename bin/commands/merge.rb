@@ -5,6 +5,10 @@ command :merge do |c|
   c.arg_name      'abort'
   c.switch        :abort
 
+  c.desc          'Squashes the changes to a single commit. The next commit will have one parent'
+  c.arg_name      'squash'
+  c.switch        :squash
+
   c.action do |global_options, options, args|
     repository = global_options[:repository]
     commit     = repository.resolve(:head, :commit)
@@ -26,15 +30,17 @@ command :merge do |c|
 
     merge_status = repository.merge commit, commit_two
 
-    # Save the merged commit ids so that the next
-    # commit has both as parents.
-    repository.config['merge'] = {
-      'parents' => [
-        commit.id,
-        commit_two.id,
-      ]
-    }
-    repository.config.save
+    unless options[:squash]
+      # Save the merged commit ids so that the next
+      # commit has both as parents.
+      repository.config['merge'] = {
+        'parents' => [
+          commit.id,
+          commit_two.id,
+        ]
+      }
+      repository.config.save
+    end
 
     puts "# Merged #{args.first} into #{repository.head}"
     puts
@@ -59,7 +65,7 @@ command :merge do |c|
       puts
     else
       puts "# You can now use `scv commit` to create the merge commit"
-      puts "# The next commit will have two parents"
+      puts "# The next commit will have two parents" unless options[:squash]
       puts "# To abort the merge (not create a merge commit) use `scv merge --abort`"
     end
   end
