@@ -60,11 +60,11 @@ command :commit do |c|
 
     date = options[:date].is_a?(String) ? DateTime.parse(options[:date]) : options[:date]
 
-    repository.branch_head = repository.resolve('head~1', :commit) if options[:amend]
-
     parents = nil
 
-    if repository.config['merge'] and repository.config['merge']['parents']
+    if options[:amend]
+      parents = repository.resolve('head', :commit).parents
+    elsif repository.config['merge'] and repository.config['merge']['parents']
       # There is a merge waiting for a commit creation
       parents = repository.config['merge']['parents']
 
