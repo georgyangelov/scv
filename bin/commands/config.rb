@@ -18,7 +18,12 @@ command :config do |c|
       else
         # Print the specified option value
         value = repository.config[args.first]
-        puts value unless value.nil?
+
+        if value.is_a? Hash
+          SCV::Formatters::Hierarchy.print(value)
+        elsif not value.nil?
+          puts value
+        end
       end
     else
       # Set the specified option
