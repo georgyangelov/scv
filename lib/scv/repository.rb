@@ -73,6 +73,15 @@ module SCV
     end
 
     ##
+    # Convenience method to resolve objects
+    #
+    def [](object_id, to_type=nil)
+      return super(object_id) if to_type.nil?
+
+      resolve object_id, to_type
+    end
+
+    ##
     # Delete a label (only).
     #
     def delete_label(name)

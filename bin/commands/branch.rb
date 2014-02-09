@@ -20,7 +20,7 @@ command :branch do |c|
 
       raise 'There is already a label with this name' if repository[branch_name]
 
-      repository.set_label branch_name, repository.resolve(branch_head, :commit).id
+      repository.set_label branch_name, repository[branch_head, :commit].id
     end
   end
 
@@ -56,10 +56,10 @@ command :branch do |c|
       raise 'This is the current branch already' if repository.head == branch_name
       raise 'There is no branch with this name'  if branch.nil? or branch.object_type != :label
 
-      changes = repository.commit_status repository.resolve('head',      :commit),
-                                         repository.resolve(branch_name, :commit)
+      changes = repository.commit_status repository['head',      :commit],
+                                         repository[branch_name, :commit]
 
-      status  = repository.status repository.resolve('head', :commit),
+      status  = repository.status repository['head', :commit],
                                   ignore: [/^\.|\/\./]
 
       # Check for conflicts
@@ -74,7 +74,7 @@ command :branch do |c|
       repository.set_label :head, branch_name
 
       # Reset unchanged files to their state in the new branch
-      commit = repository.resolve 'head', :commit
+      commit = repository['head', :commit]
       tree   = repository[commit.tree]
 
       tree.all_files(repository.object_store, ignore: working_dir_changes).each do |file, _|

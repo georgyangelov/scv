@@ -3,7 +3,7 @@ arg_name ''
 command :diff do |c|
   c.action do |global_options, options, args|
     repository = global_options[:repository]
-    commit     = repository.resolve(:head, :commit)
+    commit     = repository[:head, :commit]
     status     = repository.status commit,
                                    ignore: [/^\.|\/\./]
 

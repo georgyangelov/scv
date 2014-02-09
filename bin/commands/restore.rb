@@ -8,7 +8,7 @@ command [:restore] do |c|
 
   c.action do |global_options, options, args|
     repository = global_options[:repository]
-    commit     = repository.resolve options[:source], :commit
+    commit     = repository[options[:source], :commit]
 
     args.each do |path|
       repository.restore path, commit

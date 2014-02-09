@@ -11,7 +11,7 @@ command :merge do |c|
 
   c.action do |global_options, options, args|
     repository = global_options[:repository]
-    commit     = repository.resolve(:head, :commit)
+    commit     = repository[:head, :commit]
 
     if options[:abort]
       repository.config['merge'] = {}
@@ -24,7 +24,7 @@ command :merge do |c|
 
     raise 'No branch specified to merge from' if args.empty?
 
-    commit_two = repository.resolve(args.first, :commit)
+    commit_two = repository[args.first, :commit]
 
     raise 'There is no branch with that name' if commit_two.nil?
 

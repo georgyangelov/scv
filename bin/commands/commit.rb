@@ -23,7 +23,7 @@ command :commit do |c|
     repository_path  = "#{global_options[:dir]}/.scv"
 
     unless options[:amend]
-      status = repository.status repository.resolve(:head, :commit), ignore: [/^\.|\/\./]
+      status = repository.status repository[:head, :commit], ignore: [/^\.|\/\./]
 
       if status.none? { |_, files| files.any? }
         raise 'No changes since last commit'
@@ -44,7 +44,7 @@ command :commit do |c|
       commit_message_file = "#{repository_path}/COMMIT_MESSAGE"
 
       if options[:amend]
-        File.write commit_message_file, repository.resolve(:head, :commit).message
+        File.write commit_message_file, repository[:head, :commit].message
       end
 
       system "$EDITOR #{commit_message_file}"
@@ -63,7 +63,7 @@ command :commit do |c|
     parents = nil
 
     if options[:amend]
-      parents = repository.resolve('head', :commit).parents
+      parents = repository[:head, :commit].parents
     elsif repository.config['merge'] and repository.config['merge']['parents']
       # There is a merge waiting for a commit creation
       parents = repository.config['merge']['parents']
