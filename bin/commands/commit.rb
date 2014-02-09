@@ -30,8 +30,12 @@ command :commit do |c|
       end
     end
 
-    unless options[:author]
-      raise 'Please provide an author with --author="..." or set it globally with `scv config -g author ...`'
+    if options[:author]
+      author = options[:author]
+    elsif repository.config['author']
+      author = repository.config['author']
+    else
+      raise 'Please provide an author with --author="..." or set it globally with `scv config author ...`'
     end
 
     if options[:amend] and repository.head.nil?
@@ -72,7 +76,7 @@ command :commit do |c|
     end
 
     repository.commit commit_message,
-                      options[:author],
+                      author,
                       date,
                       parents: parents,
                       ignore:  [/^\.|\/\./]

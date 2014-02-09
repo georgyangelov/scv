@@ -59,12 +59,44 @@ describe SCV::Config do
       expect(config.data).to receive(:[]).with('key').and_return('value')
       expect(config['key']).to eq 'value'
     end
+
+    it 'splits the key by dots and resolves deep structures' do
+      expect(config['test.list-test']).to match_array [
+        'item 1',
+        'item 2'
+      ]
+    end
   end
 
   describe '#[]=' do
     it 'proxies data#[]=' do
       expect(config.data).to receive(:[]=).with('key', 'value').and_return('value')
       expect(config['key'] = 'value').to eq 'value'
+    end
+
+    it 'splits the key by dots and resolves deep structures' do
+      config['test.inside'] = 'changed item'
+
+      expect(config['test']['inside']).to eq 'changed item'
+    end
+
+    it 'sets the keys along the path to hashes' do
+      config['this.should.create.hashes'] = 'yay!'
+
+      expect(config['this']['should']['create']['hashes']).to eq 'yay!'
+    end
+  end
+
+  describe '#delete' do
+    it 'deletes direct keys' do
+      config.delete 'test'
+      expect(config.data.key? 'test').to be_false
+    end
+
+    it 'deletes nested keys' do
+      config.delete 'test.inside'
+      expect(config.data.key? 'test'     ).to be_true
+      expect(config['test'].key? 'inside').to be_false
     end
   end
 end

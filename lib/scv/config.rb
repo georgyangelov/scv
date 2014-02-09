@@ -21,11 +21,32 @@ module SCV
     end
 
     def [](key)
-      @data[key]
+      hash, key = resolve_key key
+      hash[key]
     end
 
     def []=(key, value)
-      @data[key] = value
+      hash, key = resolve_key key, create: true
+      hash[key] = value
+    end
+
+    def delete(key)
+      hash, key = resolve_key key, create: false
+      hash.delete key
+    end
+
+    private
+
+    def resolve_key(hash=@data, key, create: false)
+      key, rest = key.split '.', 2
+
+      if rest.nil?
+        [hash, key]
+      else
+        hash[key] = {} if create and not hash.key? key
+
+        resolve_key hash[key], rest, create: create
+      end
     end
   end
 end
