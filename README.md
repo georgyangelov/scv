@@ -45,7 +45,7 @@ Shows the actual differences between the files in the last commit and the workin
 `scv commit`
 
 Commits the current state of the working directory. All changed, new and deleted files are commited.
-For now, you should explicitly set the commit author on every commit using the `--author` option.
+You can explicitly set the commit author on every commit using the `--author` option or set it once with `scv config author "Your Name <your@email.com>"`.
 
 You can also set the date (`--date`), set the commit message (`-m` or `--message`) or amend the last commit (`--amend`). If the `-m` flag is not set the default terminal editor will be opened (as in Git).
 
@@ -62,6 +62,50 @@ Lists all commits, in reverse-chronological order with their **id**, **date**, *
 Restores files to the state they were in the `head` commit. `paths` can be files or directories. New files will not be removed, only changed and deleted files are restored.
 
 You can optionally specify the source commit with `-s` or `--source` by giving its object_id, a label name that references it or an object_id and a relative offset (for example `head~3`).
+
+---
+`scv branch new <branch_name>` or `scv branch create <branch_name>`
+
+Creates a new branch based on the current branch head.
+
+---
+`scv branch delete <branch_name>` or `scv branch remove <branch_name>`
+
+Deletes the specified branch. The commits are not lost, only the label is deleted.
+
+---
+`scv branch switch <branch_name>`
+
+Switches the current directory to the specified branch head. It works as follows:
+  - Detects the changes that should be made to switch from the current branch to the other
+  - If you have modified files that would have to be overrwriten (modified) fails with an error
+  - Keeps all of your new or modified files and only overwrites unmodified ones
+  - May restore any deleted files that are present in the other branch
+  - Switches the current branch to `branch_name` (the following commits will be on branch `branch_name`)
+
+---
+`scv config`
+
+Lists all configuration properties and values. The output is similar to the output of the `tree` tool, because the configuration options can be nested:
+
+    level_0
+      ├─ level_1_one
+      │  ├─ level_2_one: value
+      │  └─ level_2_two: true
+      └─ level_1_two: value
+
+This configuration is stored in `.scv/config.yml` and is relative only to the current scv repository.
+
+---
+`scv config <key>`
+
+Shows the current value of `<key>`. A key of the form `one.two.three` can be used to reference nested properties.
+
+---
+`scv config <key> <value>`
+
+Sets the option `key` to `value`. As in the previous command, you can use the `one.two.three` form to reference nested properties. If the key doesn't exist it is created.
+
 
 Try it!
 =======
