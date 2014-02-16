@@ -41,6 +41,7 @@ require_relative 'commands/restore'
 require_relative 'commands/branch'
 require_relative 'commands/merge'
 require_relative 'commands/config'
+require_relative 'commands/server'
 
 pre do |global, command, options, args|
   # Pre logic here

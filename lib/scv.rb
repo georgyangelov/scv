@@ -9,3 +9,5 @@ require 'scv/config'
 require 'scv/object_store'
 
 require 'scv/repository'
+
+require 'scv/server'
