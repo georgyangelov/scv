@@ -93,6 +93,14 @@ module SCV
     end
 
     ##
+    # Push history to remote repository
+    #
+    def push(remote_store, local_branch, remote_branch)
+      sync = VCSToolkit::Utils::Sync.new object_store, local_branch, remote_store, remote_branch
+      sync.push
+    end
+
+    ##
     # Create an empty repository in the specified directory.
     #
     # Initializes the directory structure and creates a head label.

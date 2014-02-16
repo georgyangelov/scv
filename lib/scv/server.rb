@@ -50,6 +50,7 @@ module SCV
     def store(path, request)
       content = request.body.read
 
+      FileUtils.mkdir_p File.dirname(path)
       File.write path, content
 
       [200, {}, []]
