@@ -106,14 +106,47 @@ Shows the current value of `<key>`. A key of the form `one.two.three` can be use
 
 Sets the option `key` to `value`. As in the previous command, you can use the `one.two.three` form to reference nested properties. If the key doesn't exist it is created.
 
+---
+`scv server`
+
+Starts an HTTP server to serve as a remote. The server listens on 0.0.0.0 (all addresses) on port 4242.
+So the remote's address is (for example) `http://localhost:4242`.
+
+---
+`scv remote add <name> <address>`
+
+Adds a remote repository. `<address>` is the HTTP url to a server started with `scv server`
+
+---
+`scv remote delete <name>`
+
+Removes a remote.
+
+---
+`scv remote fetch <name> <remote branch> [<local branch>]`
+
+Fetches remote history. Does not merge automatically and fails if it cannot do a Fast-Forward.
+
+---
+`scv remote pull <name> <remote branch> [<local branch>]`
+
+Fetches the remote history to a local branch with a name of `<remote_name>~<remote_branch>` (for example `origin~master`) and after that merges that branch to `<local branch>`.
+
+The changes of the merge are not committed.
+
+---
+`scv remote push <name> <local branch> [<remote branch>]`
+
+Pushes local history to remote and updates the remote branch to point to the newest commit.
+Fails if it cannot do a Fast-Forward.
+
 
 Try it!
 =======
-Since there are a lot of features currently missing, SCV is not yet available on RubyGems.
+SCV is on RubyGems by the name `scvcs`, because, unfortunately, `scv` was already taken.
 
-1. Clone this repository
-2. `bundle install`
-3. `./run_scv help`
+`gem install scvcs`
+`scv help`
 
 .scv structure
 ================
