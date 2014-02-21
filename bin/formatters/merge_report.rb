@@ -1,24 +1,30 @@
 module SCV::Formatters
   module MergeReport
     def self.print(merge_status)
+      puts format(merge_status)
+    end
+
+    def self.format(merge_status)
+      output = ""
+
       if merge_status[:merged].any?
-        puts "# Automatic merges:"
+        output << "# Automatic merges:\n"
 
         merge_status[:merged].each do |file|
-          puts "    #{file}".yellow
+          output << "    #{file}\n".yellow
         end
 
-        puts
+        output << "\n"
       end
 
       if merge_status[:conflicted].any?
-        puts "# Conflicted files:"
+        output << "# Conflicted files:\n"
 
         merge_status[:conflicted].each do |file|
-          puts "    #{file}".red
+          output << "    #{file}\n".red
         end
 
-        puts
+        output << "\n"
       end
     end
   end
