@@ -72,7 +72,7 @@ pre do |global, command, options, args|
 
   # Check if there is a commit in the repository
   # as most commands expect one to exist.
-  unless [:init, :status, :commit, :server].include? command.name
+  unless [:init, :status, :commit, :server, :config].include? command.name
     raise "There are no commits in the repository" if repository.branch_head.nil?
   end
 
