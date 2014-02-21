@@ -91,7 +91,9 @@ command :remote do |c|
         repository.set_label local_branch, nil
       end
 
-      raise 'There is no remote with this name' unless repository.config['remotes'][remote_name]
+      unless repository.config['remotes'] and repository.config['remotes'][remote_name]
+        raise 'There is no remote with this name'
+      end
 
       remote_file_store   = SCV::HTTPFileStore.new repository.config['remotes'][remote_name]['url']
       remote_object_store = SCV::ObjectStore.new   remote_file_store
