@@ -3,7 +3,8 @@ arg_name ''
 command :status do |c|
   c.action do |global_options, options, args|
     repository = global_options[:repository]
-    commit     = repository.branch_head
+    commit_id  = repository.branch_head
+    commit     = commit_id ? repository[commit_id] : nil
     status     = repository.status commit,
                                    ignore: [/^\.|\/\./]
 
