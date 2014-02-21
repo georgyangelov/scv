@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'scv/version'
 
 Gem::Specification.new do |spec|
-  spec.name        = 'scv'
+  spec.name        = 'scvcs'
   spec.version     = SCV::VERSION
   spec.authors     = ["Georgy Angelov"]
   spec.email       = ["georgyangelov@gmail.com"]
