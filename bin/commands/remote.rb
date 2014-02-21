@@ -100,4 +100,43 @@ command :remote do |c|
     end
   end
 
+  c.desc 'Pull remote history objects to local branch. Merges automatically'
+  c.arg_name '<remote> <remote branch> [<local branch>]'
+  c.command :pull do |pull|
+    pull.action do |global_options, options, args|
+      raise 'Please specify remote name and remote branch' unless args.size >= 2
+
+      repository = global_options[:repository]
+
+      remote_name   = args[0]
+      remote_branch = args[1]
+
+      if args.size > 2
+        local_branch = args[2]
+      else
+        local_branch = remote_branch
+      end
+
+      unless repository[local_branch]
+        # There is no local branch with this name, so create it
+        repository.set_label local_branch, nil
+      end
+
+      raise 'There is no remote with this name' unless repository.config['remotes'][remote_name]
+
+      remote_file_store   = SCV::HTTPFileStore.new repository.config['remotes'][remote_name]['url']
+      remote_object_store = SCV::ObjectStore.new   remote_file_store
+
+      # Step 1: Fetch to another branch
+      temp_branch = "#{remote_name}~#{remote_branch}"
+
+      repository.fetch remote_object_store, remote_branch, temp_branch
+
+      # Step 2: Merge temp_branch into local_branch
+      merge_status = repository.merge repository[temp_branch, :commit], repository[local_branch, :commit]
+
+      SCV::Formatters::MergeReport.print merge_status
+    end
+  end
+
 end

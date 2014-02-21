@@ -45,25 +45,9 @@ command :merge do |c|
     puts "# Merged #{args.first} into #{repository.head}"
     puts
 
-    if merge_status[:merged].any?
-      puts "# Automatic merges:"
+    SCV::Formatters::MergeReport.print merge_status
 
-      merge_status[:merged].each do |file|
-        puts "    #{file}".yellow
-      end
-
-      puts
-    end
-
-    if merge_status[:conflicted].any?
-      puts "# Conflicted files:"
-
-      merge_status[:conflicted].each do |file|
-        puts "    #{file}".red
-      end
-
-      puts
-    else
+    unless merge_status[:conflicted].any?
       puts "# You can now use `scv commit` to create the merge commit"
       puts "# The next commit will have two parents" unless options[:squash]
       puts "# To abort the merge (not create a merge commit) use `scv merge --abort`"
