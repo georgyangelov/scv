@@ -96,8 +96,14 @@ module SCV
     # Push history to remote repository
     #
     def push(remote_store, local_branch, remote_branch)
-      sync = VCSToolkit::Utils::Sync.new object_store, local_branch, remote_store, remote_branch
-      sync.push
+      VCSToolkit::Utils::Sync.sync object_store, local_branch, remote_store, remote_branch
+    end
+
+    ##
+    # Fetch history from remote repository
+    #
+    def fetch(remote_store, remote_branch, local_branch)
+      VCSToolkit::Utils::Sync.sync remote_store, remote_branch, object_store, local_branch
     end
 
     ##
