@@ -130,10 +130,25 @@ command :remote do |c|
       # Step 1: Fetch to another branch
       temp_branch = "#{remote_name}~#{remote_branch}"
 
+      # Create the temp branch if not existing
+      repository.set_label temp_branch, nil unless repository[temp_branch]
+
       repository.fetch remote_object_store, remote_branch, temp_branch
 
       # Step 2: Merge temp_branch into local_branch
-      merge_status = repository.merge repository[temp_branch, :commit], repository[local_branch, :commit]
+      dest_commit   = repository[temp_branch, :commit]
+      source_commit = repository[local_branch, :commit]
+      merge_status  = repository.merge source_commit, dest_commit
+
+      # Save the merged commit ids so that the next
+      # commit has both as parents.
+      repository.config['merge'] = {
+        'parents' => [
+          source_commit.id,
+          dest_commit.id,
+        ]
+      }
+      repository.config.save
 
       SCV::Formatters::MergeReport.print merge_status
     end
