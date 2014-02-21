@@ -3,7 +3,7 @@ arg_name ''
 command :status do |c|
   c.action do |global_options, options, args|
     repository = global_options[:repository]
-    commit     = repository[:head, :commit]
+    commit     = repository.branch_head
     status     = repository.status commit,
                                    ignore: [/^\.|\/\./]
 
@@ -11,7 +11,7 @@ command :status do |c|
       puts "# No commits"
     else
       puts "# On branch #{repository.head}"
-      puts "# On commit #{commit.id.yellow}"
+      puts "# On commit #{commit.id.yellow}" if commit
     end
 
     if repository.config['merge'] and repository.config['merge']['parents']
