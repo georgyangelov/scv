@@ -42,9 +42,9 @@ module SCV
     def fetch(path, request)
       return [404, {}, []] unless File.file?(path)
 
-      content = File.read path
+      file = File.new path, 'rb'
 
-      [200, {'Content-Length' => content.length.to_s}, [content]]
+      [200, {}, file]
     end
 
     def store(path, request)
