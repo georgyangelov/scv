@@ -1,32 +1,48 @@
 desc 'Shows the created, modified and deleted files'
-arg_name ''
+arg_name '[<commit>]'
 command :status do |c|
   c.action do |global_options, options, args|
     repository = global_options[:repository]
-    commit_id  = repository.branch_head
-    commit     = commit_id ? repository[commit_id] : nil
-    status     = repository.status commit,
-                                   ignore: [/^\.|\/\./]
 
-    if repository.head.nil?
-      puts "# No commits"
+
+    if args.empty?
+      commit_id = repository.branch_head
+      commit    = commit_id ? repository[commit_id] : nil
+      status    = repository.status commit,
+                                    ignore: [/^\.|\/\./]
+      commit_status = false
     else
-      puts "# On branch #{repository.head}"
-      puts "# On commit #{commit.id.yellow}" if commit
+      source_commit_id   = repository[args[0], :commit].parents[0]
+      source_commit      = source_commit_id ? repository[source_commit_id] : nil
+      destination_commit = repository[:head, :commit]
+
+      status = repository.commit_status source_commit,
+                                        destination_commit,
+                                        ignore: [/^\.|\/\./]
+      commit_status = true
     end
 
-    if repository.config['merge'] and repository.config['merge']['parents']
-      parents = repository.config['merge']['parents']
+    unless commit_status
+      if repository.head.nil?
+        puts "# No commits"
+      else
+        puts "# On branch #{repository.head}"
+        puts "# On commit #{commit.id.yellow}" if commit
+      end
+
+      if repository.config['merge'] and repository.config['merge']['parents']
+        parents = repository.config['merge']['parents']
+
+        puts
+        puts "# Next commit parents:"
+
+        parents.each do |commit_id|
+          puts "#     - #{commit_id.yellow}"
+        end
+      end
 
       puts
-      puts "# Next commit parents:"
-
-      parents.each do |commit_id|
-        puts "#     - #{commit_id.yellow}"
-      end
     end
-
-    puts
 
     if status.none? { |_, files| files.any? }
       puts "# No changes"
