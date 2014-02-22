@@ -20,9 +20,6 @@ The project itself is split into two parts: [**VCSToolkit**](https://github.com/
 
 Features
 ========
-*Note: The examples below use the form `scv <command>`, but if you want to test it right now, follow the 3 steps in the **Try it!** section and use `./run_scv <command>`.*
-
-Currently implemented features:
 
 ---
 `scv init`
